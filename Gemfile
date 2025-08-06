@@ -31,6 +31,8 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 gem "devise"
+gem "ransack"
+gem "kaminari"
 
 # gem "nokogiri", ">= 1.8.5"
 
@@ -49,4 +51,5 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+  gem "rspec-rails"
 end
