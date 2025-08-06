@@ -51,3 +51,34 @@ ChatSystemはチャットUIによってドキュメントの検索を行うAPI�
 セッションごとに chat_settion レコードを作成し、chat_session の子として chat_message レコードを作成します。
 不具合報告は issues テーブルに保存します。その際、前後の文脈を取得できるよう、chat_sessionテーブルのIDをissuesレコードに保持します
 
+## ローカル環境での起動
+
+### 前提条件
+- Docker
+- Docker Compose
+
+### 起動手順
+
+1. コンテナをビルドして起動
+```bash
+docker-compose up --build
+```
+
+2. データベースのセットアップ
+```bash
+docker-compose exec app rails db:create db:migrate db:seed
+```
+
+### アクセス方法
+- アプリケーション: http://localhost
+- MinIOコンソール: http://localhost:9001
+  - ユーザー名: minioadmin
+  - パスワード: minioadmin
+
+### コンテナ構成
+- **app**: Railsアプリケーション（ポート3000）
+- **db**: PostgreSQLデータベース（ポート5432）
+- **nginx**: リバースプロキシ（ポート80）
+- **minio**: S3互換オブジェクトストレージ（API: ポート9000、コンソール: ポート9001）
+  - データは `containers/minio/data` に保存されます
+

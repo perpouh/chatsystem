@@ -10,8 +10,13 @@ services:
     environment:
       - RAILS_ENV=development
       - DATABASE_URL=postgresql://postgres:password@db:5432/chatsystem_development
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET=chatsystem
     depends_on:
       - db
+      - minio
     networks:
       - chatsystem_network
 
@@ -34,6 +39,20 @@ services:
       - "80:80"
     depends_on:
       - app
+    networks:
+      - chatsystem_network
+
+  minio:
+    build: ./containers/minio
+    container_name: chatsystem_minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - ./containers/minio/data:/export
     networks:
       - chatsystem_network
 
