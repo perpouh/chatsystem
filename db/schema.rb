@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_08_06_065507) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_06_112352) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -39,18 +39,19 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_06_065507) do
     t.string "api_secret"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "title"
+    t.bigint "document_id"
+    t.index ["document_id"], name: "index_chats_on_document_id"
     t.index ["user_id"], name: "index_chats_on_user_id"
   end
 
   create_table "documents", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "chat_id", null: false
     t.string "title"
-    t.string "url"
+    t.string "document_url"
     t.string "summery"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["chat_id"], name: "index_documents_on_chat_id"
     t.index ["summery"], name: "index_documents_on_summery"
     t.index ["user_id"], name: "index_documents_on_user_id"
   end
@@ -78,8 +79,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_06_065507) do
 
   add_foreign_key "chat_messages", "chat_sessions"
   add_foreign_key "chat_sessions", "chats"
+  add_foreign_key "chats", "documents"
   add_foreign_key "chats", "users"
-  add_foreign_key "documents", "chats"
   add_foreign_key "documents", "users"
   add_foreign_key "issues", "chat_sessions"
 end
