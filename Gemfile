@@ -33,6 +33,7 @@ gem "thruster", require: false
 gem "devise"
 gem "ransack"
 gem "kaminari"
+gem "enum_help"
 
 # gem "nokogiri", ">= 1.8.5"
 
