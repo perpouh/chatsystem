@@ -10,6 +10,10 @@ services:
     environment:
       - RAILS_ENV=development
       - DATABASE_URL=postgresql://postgres:password@db:5432/chatsystem_development
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_DATABASE=chatsystem_development
+      - DB_HOST=db
       - MINIO_ENDPOINT=http://minio:9000
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin

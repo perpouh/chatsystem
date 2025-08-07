@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_08_07_043115) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_07_105327) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,20 +40,20 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_07_043115) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "title"
-    t.bigint "document_id"
-    t.index ["document_id"], name: "index_chats_on_document_id"
+    t.bigint "product_id", null: false
+    t.index ["product_id"], name: "index_chats_on_product_id"
     t.index ["user_id"], name: "index_chats_on_user_id"
   end
 
   create_table "documents", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.string "title"
     t.string "document_url"
     t.string "summery"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "product_id", null: false
+    t.index ["product_id"], name: "index_documents_on_product_id"
     t.index ["summery"], name: "index_documents_on_summery"
-    t.index ["user_id"], name: "index_documents_on_user_id"
   end
 
   create_table "issues", force: :cascade do |t|
@@ -65,6 +65,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_07_043115) do
     t.integer "issue_status", default: 0
     t.datetime "archived_at"
     t.index ["chat_session_id"], name: "index_issues_on_chat_session_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_products_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -81,8 +90,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_07_043115) do
 
   add_foreign_key "chat_messages", "chat_sessions"
   add_foreign_key "chat_sessions", "chats"
-  add_foreign_key "chats", "documents"
+  add_foreign_key "chats", "products"
   add_foreign_key "chats", "users"
-  add_foreign_key "documents", "users"
+  add_foreign_key "documents", "products"
   add_foreign_key "issues", "chat_sessions"
+  add_foreign_key "products", "users"
 end

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Chat, type: :model do
   let(:user) { create(:user) }
-  let(:document) { create(:document) }
+  let(:product) { create(:product, user: user) }
 
   describe 'Chatレコードの作成' do
 
@@ -11,7 +11,7 @@ RSpec.describe Chat, type: :model do
         chat = Chat.new
         expect(chat).not_to be_valid
         expect(chat.errors.full_messages).to include("User must exist")
-        expect(chat.errors.full_messages).to include("Document must exist")
+        expect(chat.errors.full_messages).to include("Product must exist")
         expect(chat.errors.full_messages).to include("Title can't be blank")
       end
     end
@@ -26,11 +26,11 @@ RSpec.describe Chat, type: :model do
 
     context 'バリデーションエラーが無い場合' do
       it 'Chatレコードが作成できること' do
-        chat = Chat.new(user: user, document: document, title: "test")
+        chat = Chat.new(user: user, product: product, title: "test")
         expect(chat).to be_valid
       end
       it 'APIキーとAPIシークレットが作成されること' do
-        chat = Chat.create(user: user, document: document, title: "test")
+        chat = Chat.create(user: user, product: product, title: "test")
         expect(chat.api_key).not_to be_nil
         expect(chat.api_secret).not_to be_nil
       end

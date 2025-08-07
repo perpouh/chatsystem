@@ -6,7 +6,7 @@
 #
 #  id         :bigint           not null, primary key
 #  user_id    :bigint           not null
-#  document_id :bigint           not null
+#  product_id :bigint           not null
 #  api_key    :string           not null
 #  api_secret :string           not null
 #  title      :string           not null
@@ -15,13 +15,13 @@
 #
 # Indexes
 #
-#  index_chats_on_document_id  document_id)
+#  index_chats_on_product_id  (product_id)
 #  index_chats_on_user_id      (user_id)
 #
 class Chat < ApplicationRecord
   before_create :generate_api_key_and_secret
   belongs_to :user
-  belongs_to :document
+  belongs_to :product
 
   validates :title, presence: true, length: { maximum: 200 }
 

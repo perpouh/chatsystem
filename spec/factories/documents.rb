@@ -3,6 +3,6 @@ FactoryBot.define do
     title { "test" }
     document_url { "https://example.com" }
     summery { "test" }
-    user
+    association :product
   end
 end
