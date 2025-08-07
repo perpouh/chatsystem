@@ -22,6 +22,7 @@ class Chat < ApplicationRecord
   before_create :generate_api_key_and_secret
   belongs_to :user
   belongs_to :product
+  has_many :chat_sessions, dependent: :destroy
 
   validates :title, presence: true, length: { maximum: 200 }
 

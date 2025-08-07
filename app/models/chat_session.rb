@@ -17,6 +17,8 @@
 #  index_chat_sessions_on_chat_id  (chat_id)
 class ChatSession < ApplicationRecord
   belongs_to :chat
+  has_many :chat_messages, dependent: :destroy
+  has_one :issue, dependent: :destroy
 
   validates :user_agent, presence: true
   validates :page_url, presence: true
