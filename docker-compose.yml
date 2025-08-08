@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: chatsystem_app
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+    environment:
+      - RAILS_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@db:5432/chatsystem_development
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_DATABASE=chatsystem_development
+      - DB_HOST=db
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET=chatsystem
+    depends_on:
+      - db
+      - minio
+    networks:
+      - chatsystem_network
+
+  db:
+    build: ./containers/postgres
+    container_name: chatsystem_db
+    environment:
+      - POSTGRES_DB=chatsystem_development
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - chatsystem_network
+
+  nginx:
+    build: ./containers/nginx
+    container_name: chatsystem_nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    networks:
+      - chatsystem_network
+
+  minio:
+    build: ./containers/minio
+    container_name: chatsystem_minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - ./containers/minio/data:/export
+    networks:
+      - chatsystem_network
+
+volumes:
+  postgres_data:
+  bundle_cache:
+
+networks:
+  chatsystem_network:
+    driver: bridge 

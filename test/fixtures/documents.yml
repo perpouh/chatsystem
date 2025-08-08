@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  document_url: MyString
+  summery: MyString
+
+two:
+  title: MyString
+  document_url: MyString
+  summery: MyString

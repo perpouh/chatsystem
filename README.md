@@ -1,52 +1,84 @@
 # README
-## Project Title / プロジェクトのタイトル
+## ChatSystem
 
-One Paragraph of project description goes here  
-プロジェクトの概要を 1 段落でここに書きます
+ChatSystemはチャットUIによってドキュメントの検索を行うAPIです。
+ユーザーの質問に対し適切なドキュメントを検索して返却します。
+ユーザーの質問に対し適切なドキュメントが見つからない場合、不具合報告フローに進みます。
 
-## Getting Started / スタートガイド
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-プロジェクトを複製してローカル端末で実行し、開発や検証ができるまでの手順を説明します。実際のシステムにプロジェクトをデプロイする方法については、デプロイの項目を参照してください。
+## ドキュメント検索
 
-## Prerequisites / 必要条件
-What things you need to install the software and how to install them  
-プロジェクトを走らせるためにはどんなソフトウェアが必要で、それらをどのようにインストールするか
+ユーザーの質問を受け、documentsテーブルを検索してドキュメントのタイトルとURLを返却します。
 
-## Installing / インストール
-A step by step series of examples that tell you how to get a development env running  
-動作する開発環境の構築方法を段階的に例示します
+### リクエスト
 
-## Running the tests / テストの実行
-Explain how to run the automated tests for this system  
-自動テストをどのように実行するかをここで説明します
+エンドポイント: /chat
+認証: Bearer認証
+セッション有効期限: 30分
 
-## Deployment / デプロイ
-Add additional notes about how to deploy this on a live system  
-実際のシステムにデプロイするための補足的な説明を行います
+ - ユーザー入力文字列
+ - 画面URL
+ - ユーザーエージェント文字列
+ - 画像（任意）
+ - 日時
+ - メッセージ種別（質問/不具合報告）
 
-## Built With / 協働するシステムのリスト
- - Dropwizard - The web framework used / 使用した web フレームワーク
- - Maven - Dependency Management / 依存関係管理ソフトウェア
- - ROME - Used to generate RSS Feeds / 使用した RSS フィード生成
+### レスポンス
 
-## Contributing / コントリビューション
-Please read CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests to us.  
-私たちのコーディング規範とプルリクエストの手順についての詳細はCONTRIBUTING.md を参照してください。
+  - 検索結果配列
+    - ドキュメントタイトル
+    - ドキュメントURL
 
-## Versioning / バージョン管理
-We use SemVer for versioning. For the versions available, see the tags on this repository.  
-私たちはバージョン管理に SemVerを使用しています。利用可能なバージョンはこのリポジトリのタグを参照してください。
+## 不具合報告
 
-## Authors / 著者
-Billie Thompson - Initial work / 原著者 - PurpleBooth  
-See also the list of contributors who participated in this project.  
-このプロジェクトへの貢献者のリストもご覧ください。
+ユーザーの不具合報告を受け付けます。返却はHTTPステータスのみとなります。
 
-## License / ライセンス
-This project is licensed under the MIT License - see the LICENSE.md file for details  
-このプロジェクトは MIT ライセンスの元にライセンスされています。 詳細はLICENSE.mdをご覧ください。
+### リクエスト
 
-## Acknowledgments / 謝辞
-### Hat tip to anyone whose code was used / コードを書いた人への感謝
-### Inspiration / 何からインスピレーションを得たか
-### etc / その他
+エンドポイント: /issue
+認証: Bearer認証
+セッション有効期限: 無し
+
+ - ユーザー入力文字列
+ - 画面URL
+ - ユーザーエージェント文字列
+ - 画像（任意）
+ - 日時
+ - メッセージ種別（質問/不具合報告）
+
+## ログ
+
+ユーザーのチャットログを収集します。
+セッションごとに chat_settion レコードを作成し、chat_session の子として chat_message レコードを作成します。
+不具合報告は issues テーブルに保存します。その際、前後の文脈を取得できるよう、chat_sessionテーブルのIDをissuesレコードに保持します
+
+## ローカル環境での起動
+
+### 前提条件
+- Docker
+- Docker Compose
+
+### 起動手順
+
+1. コンテナをビルドして起動
+```bash
+docker-compose up --build
+```
+
+2. データベースのセットアップ
+```bash
+docker-compose exec app rails db:create db:migrate db:seed
+```
+
+### アクセス方法
+- アプリケーション: http://localhost
+- MinIOコンソール: http://localhost:9001
+  - ユーザー名: minioadmin
+  - パスワード: minioadmin
+
+### コンテナ構成
+- **app**: Railsアプリケーション（ポート3000）
+- **db**: PostgreSQLデータベース（ポート5432）
+- **nginx**: リバースプロキシ（ポート80）
+- **minio**: S3互換オブジェクトストレージ（API: ポート9000、コンソール: ポート9001）
+  - データは `containers/minio/data` に保存されます
+
